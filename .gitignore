@@ -10,3 +10,7 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# binaries
+0-db-compaction-manager
+0-db-compaction-manager.exe
