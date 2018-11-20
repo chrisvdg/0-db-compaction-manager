@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/robfig/cron"
@@ -28,6 +29,10 @@ func main() {
 	verbose := flag.Bool("verbose", false, "Verbose output")
 
 	flag.Parse()
+
+	if *verbose {
+		fmt.Printf("schedule: %s\n", *schedule)
+	}
 
 	zdb, err := NewZDB(*zdbBackend, *listen, *port, *datasize, *mode, *verbose)
 	if err != nil {
