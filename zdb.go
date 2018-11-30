@@ -131,6 +131,7 @@ func (zdb *ZDB) Run() error {
 		if zdb.mode != "" {
 			args = append(args, "--mode", zdb.mode)
 		}
+
 		if zdb.datasize != "" {
 			args = append(args, "--datasize", zdb.mode)
 		}

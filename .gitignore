@@ -14,3 +14,6 @@
 # binaries
 0-db-compaction-manager
 0-db-compaction-manager.exe
+
+# config files
+config.yaml

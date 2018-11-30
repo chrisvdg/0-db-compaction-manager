@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/chrisvdg/0-db-compaction-manager/config"
+
 	"github.com/robfig/cron"
 )
 
@@ -21,25 +23,24 @@ var (
 )
 
 func main() {
-	zdbBackend := flag.String("dir", "zdb", "0-db backend folder (will contain index and data folders)")
-	schedule := flag.String("schedule", "0 0 4 * * *", "Schedule when compaction will take place (default: every day at 4am)")
-	port := flag.String("port", "9900", "Listen port")
-	listen := flag.String("listen", "0.0.0.0", "Listen address")
-	mode := flag.String("mode", "", "0-db mode")
-	datasize := flag.String("datasize", "", "Maximum datafile size before split (default: 256.00 MB)")
-	verbose := flag.Bool("verbose", false, "Verbose output")
+	cfgFile := flag.String("config", "config.yaml", "Config file location")
 
 	flag.Parse()
 
-	fmt.Printf("Schedule: %s\n", *schedule)
+	cfg, err := config.ZDBCompactionManagerFromYAML(*cfgFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	zdb, err := NewZDB(*zdbBackend, *listen, *port, *datasize, *mode, *verbose)
+	fmt.Printf("Schedule: %s\n", cfg.Schedule)
+
+	zdb, err := NewZDB(cfg.BackendDir, cfg.ListenAddr, cfg.ListenPort, cfg.DataSize, cfg.Mode, cfg.Verbose)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Run compactor trigger in background
-	err = scheduleCompacting(*schedule, zdb)
+	err = scheduleCompacting(cfg.Schedule, zdb)
 	if err != nil {
 		log.Fatal(err)
 	}
