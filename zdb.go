@@ -8,6 +8,7 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // NewZDB returns a new ZDB
@@ -141,14 +142,16 @@ func (zdb *ZDB) Run() error {
 		zdb.cmd.Stdout = os.Stdout
 		zdb.cmd.Stderr = os.Stderr
 
+		fmt.Printf("%s: Running zdb\n", time.Now().Format(timestampFormat))
 		zdb.running = true
 		err := zdb.cmd.Run()
 		zdb.running = false
 
 		if zdb.compactTriggered {
+			fmt.Printf("%s: Compacting zdb\n", time.Now().Format(timestampFormat))
 			err := zdb.Compact()
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "Compacting failed: %s\n", err)
+				fmt.Fprintf(os.Stderr, "%s: Compacting failed: %s\n", time.Now().Format(timestampFormat), err)
 			}
 			zdb.compactTriggered = false
 			continue
@@ -179,7 +182,6 @@ func (zdb *ZDB) Compact() error {
 		return err
 	}
 
-	// For namespaces
 	files, err := ioutil.ReadDir(zdb.indexDir)
 	if err != nil {
 		os.RemoveAll(newDataDir)
@@ -196,7 +198,7 @@ func (zdb *ZDB) Compact() error {
 		}
 		namespace := f.Name()
 
-		// run compaction
+		// run data compaction
 		compactionArgs := []string{
 			"--data", zdb.dataDir,
 			"--target", newDataDir,

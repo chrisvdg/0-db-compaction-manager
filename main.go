@@ -17,6 +17,7 @@ var (
 	zdbBin           = "zdb"
 	zdbCompactionBin = "zdb-compaction"
 	zdbReindexerBin  = "index-rebuild"
+	timestampFormat  = "15:04:05 02/01/06"
 )
 
 func main() {
@@ -30,9 +31,7 @@ func main() {
 
 	flag.Parse()
 
-	if *verbose {
-		fmt.Printf("schedule: %s\n", *schedule)
-	}
+	fmt.Printf("Schedule: %s\n", *schedule)
 
 	zdb, err := NewZDB(*zdbBackend, *listen, *port, *datasize, *mode, *verbose)
 	if err != nil {
